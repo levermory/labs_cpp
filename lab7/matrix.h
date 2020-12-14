@@ -1,3 +1,11 @@
+//
+// Created by levermory on 12/14/20.
+//
+
+#ifndef LAB7_MATRIX_H
+#define LAB7_MATRIX_H
+
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -85,7 +93,7 @@ Matrix<T>::Matrix(int _size): size(_size)
             data[i][j] = rand()%10;
         }
     }
-    number++;
+    ++number;
     name = "matrix" + to_string(number);
 }
 
@@ -211,3 +219,6 @@ bool Matrix<T>::operator!=(Matrix matr) {
 }
 
 
+
+
+#endif //LAB7_MATRIX_H

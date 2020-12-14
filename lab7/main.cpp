@@ -1,4 +1,3 @@
-#include <iostream>
 #include "matrix.h"
 
 template<class T>
@@ -24,7 +23,3 @@ int main() {
     task();
     return 0;
 }
-
-//007 019 023
-//101 113 128
-//201 217 221
