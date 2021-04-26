@@ -24,50 +24,45 @@ public:
     string getname();
     int getsize();
 
-    Matrix<T> operator+(Matrix);
-    Matrix<T> operator-(Matrix);
+    Matrix<T> operator+(Matrix&);
+    Matrix<T> operator-(Matrix&);
     Matrix<T> operator*(int);
     Matrix<T> operator/(int);
-    Matrix<T> operator+=(Matrix);
-    Matrix<T> operator-=(Matrix);
+    Matrix<T> operator+=(Matrix&);
+    Matrix<T> operator-=(Matrix&);
     Matrix<T> operator*=(int);
     Matrix<T> operator/=(int);
-    bool operator==(Matrix);
-    bool operator!=(Matrix);
-    friend istream& operator>>(istream&, Matrix&);
-    friend ostream& operator<<(ostream&, Matrix&);
+    Matrix<T> operator*(Matrix&);
+    Matrix<T> operator*=(Matrix&);
+    vector<T>& operator[](int);
+    bool operator==(Matrix&);
+    bool operator!=(Matrix&);
+    friend istream& operator>>(istream& in, Matrix<T>& matrix)
+    {
+        for(int i=0; i<matrix.size; ++i){
+            for (int j=0; j<matrix.size; ++j) {
+                in>>matrix.data[i][j];
+            }
+        }
+        return in;
+    }
+    friend ostream& operator<<(ostream& out, Matrix<T>& matrix)
+    {
+        out<<matrix.getname()<<"\n";
+        for(int i=0; i<matrix.size; ++i){
+            for (int j = 0; j<matrix.size; ++j) {
+                out<<matrix.data[i][j]<<" ";
+            }
+            out<<"\n";
+        }
+        return out;
+    }
 
     vector<T> row(int);
     vector<T> col(int);
 
-    T sum(vector<T>);
+    T sum(vector<T>); // надоело 😭😭
 };
-
-
-
-
-template<class T>
-istream& operator>>(istream& in, Matrix<T>& matrix)
-{
-    for(int i=0; i<matrix.size; ++i){
-        for (int j=0; j<matrix.size; ++j) {
-            in>>matrix.data[i][j];
-        }
-    }
-    return in;
-}
-
-template<class T>
-ostream& operator<<(ostream& out, Matrix<T>& matrix)
-{
-    for(int i=0; i<matrix.size; ++i){
-        for (int j = 0; j<matrix.size; ++j) {
-            out<<matrix.data[i][j]<<" ";
-        }
-        out<<"\n";
-    }
-    return out;
-}
 
 template<class T>
 Matrix<T>::Matrix(): size(50)
@@ -109,7 +104,7 @@ int Matrix<T>::getsize()
 }
 
 template<class T>
-Matrix<T> Matrix<T>::operator+(Matrix matr) {
+Matrix<T> Matrix<T>::operator+(Matrix& matr) {
     if(size != matr.size) throw invalid_argument("wrong dimensions");
     Matrix<T> result(size);
     for(int i=0; i<size; ++i){
@@ -121,7 +116,7 @@ Matrix<T> Matrix<T>::operator+(Matrix matr) {
 }
 
 template<class T>
-Matrix<T> Matrix<T>::operator-(Matrix matr) {
+Matrix<T> Matrix<T>::operator-(Matrix& matr) {
     if(size != matr.size) throw invalid_argument("wrong dimensions");
     Matrix<T> result(size);
     for(int i=0; i<size; ++i){
@@ -155,7 +150,7 @@ Matrix<T> Matrix<T>::operator/(int num) {
 }
 
 template<class T>
-Matrix<T> Matrix<T>::operator+=(Matrix matr) {
+Matrix<T> Matrix<T>::operator+=(Matrix& matr) {
     if(size != matr.size) throw invalid_argument("wrong dimensions");
     for(int i=0; i<size; ++i){
         for (int j = 0; j < size; ++j) {
@@ -166,7 +161,7 @@ Matrix<T> Matrix<T>::operator+=(Matrix matr) {
 }
 
 template<class T>
-Matrix<T> Matrix<T>::operator-=(Matrix matr) {
+Matrix<T> Matrix<T>::operator-=(Matrix& matr) {
     if(size != matr.size) throw invalid_argument("wrong dimensions");
     for(int i=0; i<size; ++i){
         for (int j = 0; j < size; ++j) {
@@ -197,7 +192,7 @@ Matrix<T> Matrix<T>::operator/=(int num) {
 }
 
 template<class T>
-bool Matrix<T>::operator==(Matrix matr) {
+bool Matrix<T>::operator==(Matrix& matr) {
     for(int i=0; i<size; ++i){
         for (int j = 0; j < size; ++j) {
             if(data[i][j] != matr.data[i][j])
@@ -208,7 +203,7 @@ bool Matrix<T>::operator==(Matrix matr) {
 }
 
 template<class T>
-bool Matrix<T>::operator!=(Matrix matr) {
+bool Matrix<T>::operator!=(Matrix& matr) {
     for(int i=0; i<size; ++i){
         for (int j = 0; j < size; ++j) {
             if(data[i][j] != matr.data[i][j])
@@ -218,7 +213,78 @@ bool Matrix<T>::operator!=(Matrix matr) {
     return false;
 }
 
+template<class T>
+ostream& operator<<(ostream& out, vector<T> vector)
+{
+    for(int i=0; i<vector.size(); ++i){
+        out<<vector[i]<<' ';
+    }
+    return out;
+}
 
+template<class T>
+vector<T> Matrix<T>::row(int i) {
+    return data[i];
+}
 
+template<class T>
+vector<T> Matrix<T>::col(int i) {
+    vector<T> result(size);
+    for (int k = 0; k < size; ++k) {
+        result[k] = data[k][i];
+//        result.push_back(data[k][i]);  //some shit with this
+    }
+    return result;
+}
+
+template<class T>
+vector<T>& Matrix<T>::operator[](int i) {
+    return data[i];
+}
+
+template<class T>
+T operator*(vector<T> vec1, vector<T> vec2)
+{
+    T result = T();
+    for (int i = 0; i < vec1.size(); ++i) {
+        result+= vec1[i]*vec2[i];
+    }
+
+    return result;
+}
+
+template<class T>
+Matrix<T> Matrix<T>::operator*(Matrix& matr) {
+    Matrix<T> result(size);
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result[i][j] = this->row(i) * matr.col(j);
+        }
+    }
+    return result;
+}
+
+template<class T>
+Matrix<T> Matrix<T>::operator*=(Matrix& matr) {
+    Matrix<T> result(size);
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            result[i][j] = this->row(i) * matr.col(j);
+        }
+    }
+    *this = result;
+    return *this;
+}
+
+template<class T>
+Matrix<T> pow(Matrix<T> &matr, int i)
+{
+    if (i<=0) throw 'wrong exponent value';
+    Matrix<T> result = matr;
+    for (int j = 1; j < i; ++j) {
+        result*=matr;
+    }
+    return result;
+}
 
 #endif //LAB7_MATRIX_H

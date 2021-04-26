@@ -3,23 +3,23 @@
 template<class T>
 int Matrix<T>::number = 0;
 
-void task()
+template<class T>
+void Show(T* array, int size)
 {
-    Matrix matrix(4);
-    Matrix matrix1(4);
-    cout<<matrix;
-    cout<<"+\n";
-    cout<<matrix1;
-    matrix+=matrix1;
-    cout<<"=\n";
-    cout<<matrix;
-    cout<<"* 5 =\n";
-    matrix*5;
-    cout<<matrix;
+    for (int i = 0; i < size; ++i) {
+        cout<<array[i]<<'\n';
+    }
+
 }
 
 int main() {
+    vector<Matrix<int>> array(7, Matrix<int>(2));
+    cout<<array;
+    Matrix<int>* pointer_array[7];
+    for (int i = 0; i < 7; ++i) {
+        pointer_array[i] = &array[i];
+    }
+    Show(pointer_array, 7);
 
-    task();
     return 0;
 }
